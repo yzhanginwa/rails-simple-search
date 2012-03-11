@@ -1,7 +1,7 @@
-SimpleSearch
-============
+rails-simple-search
+===================
 
-SimpleSearch is a Ruby on Rails plugin. It helps you quickly implement searching/filtering function for your web site.
+rails-simple-search is a Ruby gem. It helps you quickly implement searching/filtering function for your web site.
 This plugin has paginating feature built in. If you're not looking for a full-text searching solution, this plugin will
 most probably satisfy all your searching requirement.
 
@@ -14,7 +14,7 @@ plugin, I usually do the searching in the following way:
     4) Run the find(:all, :conditions => [xxxxxx], :joins => "yyyyyy") with the WHERE and JOIN clauses
 
 After having used this pattern a few times, I realized I could DRY it to make future coding of this kind of searching
-much simpler. That's where the SimpleSearch plugin comes in. 
+much simpler. That's where the rails-simple-search plugin comes in. 
 
 Now implementing the searching/filter page is a lot easier for me. You're see how easy it is by taking a look at the 
 following example. I may give more examples in the future when I have some spare time. 
@@ -31,11 +31,11 @@ We'd like to find users according to any combination of the following criteria:
               2) state of the user's address
               3) part of the name of any authors who commented the user's any posts
 
-The following is how we implement this searching function with SimpleSearch :
+The following is how we implement this searching function with rails-simple-search:
 
 Code in model (app/model/search.rb):
 
-      class Search < SimpleSearch::Base
+      class Search < RailsSimpleSearch::Base
       end
 
 Code in controller:
