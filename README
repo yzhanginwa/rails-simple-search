@@ -1,0 +1,67 @@
+SimpleSearch
+============
+
+SimpleSearch is a Ruby on Rails plugin. It helps you quickly implement searching/filtering function for your web site.
+This plugin has paginating feature built in. If you're not looking for a full-text searching solution, this plugin will
+most probably satisfy all your searching requirement.
+
+From time to time, I need to build pages to show a list of narrowed down records from a database table by giving 
+some searching criteria on some columns of the table and/or of some referencing tables. Before I implemented this
+plugin, I usually do the searching in the following way:
+    1) Use <%= form_tag %> to build a form in the view
+    2) Get the searching criteria from the params hash individually in the controller and put them into instance variable to be used in view
+    3) Build the SQL WHERE clause and sometimes the JOIN clause according to the values from the form
+    4) Run the find(:all, :conditions => [xxxxxx], :joins => "yyyyyy") with the WHERE and JOIN clauses
+
+After having used this pattern a few times, I realized I could DRY it to make future coding of this kind of searching
+much simpler. That's where the SimpleSearch plugin comes in. 
+
+Now implementing the searching/filter page is a lot easier for me. You're see how easy it is by taking a look at the 
+following example. I may give more examples in the future when I have some spare time. 
+
+
+Example
+=======
+
+Let's suppose we have models of User, Address, Post and Comment.
+User model has_one address and has_many posts; Post model has_many comments
+We'd like to find users according to any combination of the following criteria:
+
+              1) part of the user's email addrsss
+              2) state of the user's address
+              3) part of the name of any authors who commented the user's any posts
+
+The following is how we implement this searching function with SimpleSearch :
+
+Code in model (app/model/search.rb):
+
+      class Search < SimpleSearch::Base
+      end
+
+Code in controller:
+
+      @search = Search.new(User, params[:search])
+      @users = @search.run(:order => 'email')
+
+Code in views:
+
+     <% form_for @search do |f| %>
+
+       <%=f.label :email %>
+       <%=f.text_field :email %>
+
+       <%=f.label :state%>
+       <%=f.select "address.state_id", [['AL', 1], ...] %>  <!-- address is an association of model User -->
+
+       <%=f.label :post%>
+       <%=f.text_field "posts.comments.author" %>           <!-- the associations could go even deeper, isn't it POWERFUL? -->
+
+       <%=f.submit %>
+     <% end %>
+
+     <% @users.each do |user| %>
+      <%= # show the attributes of user %>
+     <% end %>
+
+
+Copyright (c) 2012 [Yi Zhang], released under the MIT license
