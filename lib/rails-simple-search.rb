@@ -7,6 +7,15 @@ module RailsSimpleSearch
                      :per_page => 20
                    }
   class Base
+    def self.inherited(subclass)
+      class << subclass
+         # in rails 3, the call to "form_for" invokes the mode_name 
+         def model_name
+           ActiveModel::Name.new(self)
+         end
+      end
+    end
+ 
     def initialize(model_class, criteria, config={})
       @model_class = (model_class.is_a?(Symbol) || model_class.is_a?(String))? model_class.to_s.camelize.constantize : model_class
       @table_name = @model_class.table_name
