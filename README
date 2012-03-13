@@ -63,5 +63,9 @@ Code in views:
       <%= # show the attributes of user %>
      <% end %>
 
+Note
+====
+For rails 2.x.x applications, you might want to use the version 0.9.0. Since version 0.9.1, this gem started to support rails 3 now.
+
 
 Copyright (c) 2012 [Yi Zhang], released under the MIT license
