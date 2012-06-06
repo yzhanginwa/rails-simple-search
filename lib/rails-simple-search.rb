@@ -30,7 +30,7 @@ module RailsSimpleSearch
     end
 
     def pages
-      (count == 0)? 0 : (count / @config[:per_page].to_i + 1) 
+      (count == 0)? 0 : (count * 1.0 / @config[:per_page]).ceil 
     end
 
     def pages_for_select
@@ -39,6 +39,10 @@ module RailsSimpleSearch
 
     def add_conditions(h={})
       @criteria.merge!(h)
+    end
+
+    def order=(str)
+      @order = str
     end
   
     def conditions
@@ -51,7 +55,7 @@ module RailsSimpleSearch
       @joins_str
     end
 
-    def run(option={})
+    def run
       run_criteria
       if @config[:paginate]
         @count = @model_class.count({:select => "distinct #{@model_class.table_name}.#{@model_class.primary_key}", 
@@ -65,12 +69,14 @@ module RailsSimpleSearch
         limit = @config[:limit]
       end
 
-      @model_class.all({:select => "distinct #{@model_class.table_name}.*", 
-                        :conditions => @conditions,
-                        :joins => @joins_str, 
-                        :offset => @config[:offset],
-                        :limit => @config[:limit] }.merge(option)
-      )
+      execute_hash = {:select => "distinct #{@model_class.table_name}.*", 
+                      :conditions => @conditions,
+                      :joins => @joins_str, 
+                      :offset => offset,
+                      :limit => limit
+      }
+      execute_hash[:order] = @order if @order
+      @model_class.all(execute_hash)
     end
 
     private
