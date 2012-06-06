@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'rails-simple-search'
-  s.version     = '0.9.1'
-  s.date        = '2012-03-11'
+  s.version     = '0.9.2'
+  s.date        = '2012-06-05'
   s.summary     = 'A very simple and light get to quick build search function in rails'
   s.description = 'this version starts to support rails 3'
   s.authors     = ['Yi Zhang']

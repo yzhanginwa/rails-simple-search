@@ -34,7 +34,8 @@ Code in model (app/model/search.rb):
 Code in controller:
 
     @search = Search.new(User, params[:search])
-    @users = @search.run(:order => 'email')
+    @search.order = 'email'  # optional
+    @users = @search.run
 
 Code in views:
 
