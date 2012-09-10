@@ -9,7 +9,7 @@ module RailsSimpleSearch
   class Base
     def self.inherited(subclass)
       class << subclass
-         # in rails 3, the call to "form_for" invokes the mode_name 
+         # in rails 3, the call to "form_for" invokes the model_name 
          def model_name
            ActiveModel::Name.new(self)
          end
