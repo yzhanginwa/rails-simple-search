@@ -154,9 +154,9 @@ module RailsSimpleSearch
         if @joins[asso_table].nil?
           @join_count += 1
           if asso_ref.belongs_to?
-            @joins[asso_table] =[@join_count, asso_table, "#{base_table}.#{asso_ref.primary_key_name} = #{asso_table}.#{asso_ref.klass.primary_key}"]
+            @joins[asso_table] =[@join_count, asso_table, "#{base_table}.#{asso_ref.foreign_key} = #{asso_table}.#{asso_ref.klass.primary_key}"]
           else
-            @joins[asso_table] = [@join_count, asso_table, "#{base_table}.#{base_class.primary_key} = #{asso_table}.#{asso_ref.primary_key_name}"]
+            @joins[asso_table] = [@join_count, asso_table, "#{base_table}.#{base_class.primary_key} = #{asso_table}.#{asso_ref.foreign_key}"]
           end
         end
       end
