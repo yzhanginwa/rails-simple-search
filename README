@@ -59,8 +59,7 @@ Code in views:
 
 Note
 ====
-For rails 2.x.x applications, you might want to use the version 0.9.0. Since version 0.9.1, this gem started to support rails 3 now.
-The latest version 0.9.3 started to support rails 3.2.6.
+For rails 2.x.x applications, you might want to use the version 0.9.0. Since version 0.9.1, this gem started to support rails 3 now. The latest version 0.9.3 started to support rails 3.2.6.
 
 There is a real demo application which you can download and run immediately: https://github.com/yzhanginwa/demo_app_for_rails_simple_search
 
