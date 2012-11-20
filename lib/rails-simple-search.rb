@@ -16,7 +16,7 @@ module RailsSimpleSearch
       end
     end
  
-    def initialize(model_class, criteria, config={})
+    def initialize(model_class, criteria={}, config={})
       @model_class = (model_class.is_a?(Symbol) || model_class.is_a?(String))? model_class.to_s.camelize.constantize : model_class
       @table_name = @model_class.table_name
       @criteria = criteria.nil? ? {} : criteria
@@ -92,9 +92,9 @@ module RailsSimpleSearch
   
     def make_joins
       @joins_str = ''
-      @joins = @joins.values
-      @joins.sort! {|a,b| a[0] <=> b[0]}
-      @joins.each do |j|
+      joins = @joins.values
+      joins.sort! {|a,b| a[0] <=> b[0]}
+      joins.each do |j|
         table = j[1]
         constrain = j[2]
         @joins_str << " inner join  #{table} on #{constrain}" 
@@ -102,7 +102,7 @@ module RailsSimpleSearch
     end
   
     def run_criteria
-      return @conditions unless @conditions.nil? 
+      return unless @conditions.nil? 
       @criteria.each do |key, value|
         if @config[:page_name].to_s == key.to_s
           @page = value.to_i
