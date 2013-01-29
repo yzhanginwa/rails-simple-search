@@ -115,7 +115,30 @@ module RailsSimpleSearch
       make_joins
     end
 
+    def parse_field_name(name)
+      result = {}
+      if name =~ /^(.*)?((_(greater|less)_than)(_or_equal_to)?)$/
+        result[:field_name] = $1
+        if $4 == 'greater'
+          result[:operator] = ">"
+        else
+          result[:operator] = "<"
+        end
+        if $5
+          result[:operator] << "="
+        end
+      else
+        result[:filed_name] = name
+      end
+      result
+    end
+
+
     def insert_condition(base_class, attribute, field, value)
+      name_hash = parse_field_name(field)
+      field = name_hash[:field_name]
+      operator = name_hash[:operator]
+
       table = base_class.table_name
       key = "#{table}.#{field}"
   
@@ -129,6 +152,8 @@ module RailsSimpleSearch
 
       if value.nil?
         verb = 'is'
+      elsif operator
+        verb = operator
       elsif column.text? && ! @config[:exact_match].include?((@table_name == table)? field : key)
         verb = 'like'
         value = "%#{value}%"

@@ -19,6 +19,7 @@ Now implementing the searching/filter page is a lot easier for me. You're see ho
 Let's suppose we have models of User, Address, Post and Comment. User model has_one address and has_many posts; Post model has_many comments. We'd like to search for users according to any combination of the following criteria:
 
 * part of the user's email addrsss
+* range of the user's birth date
 * state of the user's address
 * part of the name of any authors who commented the user's any posts
 
@@ -45,6 +46,12 @@ The following is how we implement this searching function with rails-simple-sear
 
       <%=f.label :email %>
       <%=f.text_field :email %>
+
+      <%=f.label :from_birth_date %>
+      <%=f.text_field :birth_date_greater_than_or_equal_to %>
+
+      <%=f.label :to_age %>
+      <%=f.text_field :birth_date_less_than_or_equal_to %>
 
       <%=f.label :state%>
       <%=f.select "address.state_id", [['AL', 1], ...] %>  <!-- address is an association of model User -->
