@@ -128,7 +128,7 @@ module RailsSimpleSearch
           result[:operator] << "="
         end
       else
-        result[:filed_name] = name
+        result[:field_name] = name
       end
       result
     end
