@@ -19,8 +19,7 @@ module RailsSimpleSearch
     def initialize(model_class, criteria={}, config={})
       @model_class = (model_class.is_a?(Symbol) || model_class.is_a?(String))? model_class.to_s.camelize.constantize : model_class
       @table_name = @model_class.table_name
-      @criteria = criteria.nil? ? {} : criteria
-      sanitize_criteria
+      @criteria = sanitize_criteria(criteria)
       @config = DEFAULT_CONFIG.merge(config)
       @joins = {}
     end
@@ -207,12 +206,15 @@ module RailsSimpleSearch
       insert_condition(base_class, attribute, field, value)
     end
   
-    def sanitize_criteria
-      @criteria.keys.each do |key|
-        if @criteria[key].nil? || @criteria[key].blank?
-          @criteria.delete(key)
+    def sanitize_criteria(criteria)
+      criteria = criteria || {}
+      c = {}
+      criteria.each do |key, value|
+        unless value.blank?
+          c[key] = value
         end
       end
+      c
     end
   end
 end
