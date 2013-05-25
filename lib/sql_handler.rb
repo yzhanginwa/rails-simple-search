@@ -114,7 +114,9 @@ module RailsSimpleSearch
           if asso_ref.belongs_to?
             @joins[asso_table] =[@join_count, asso_table, "#{base_table}.#{asso_ref.foreign_key} = #{asso_table}.#{asso_ref.klass.primary_key}"]
           else
-            @joins[asso_table] = [@join_count, asso_table, "#{base_table}.#{base_class.primary_key} = #{asso_table}.#{asso_ref.foreign_key}"]
+            join_cond = "#{base_table}.#{base_class.primary_key} = #{asso_table}.#{asso_ref.foreign_key}"
+            join_cond = "#{asso_table}.#{asso_ref.type} = '#{base_class.name}' and #{join_cond}" if asso_ref.type
+            @joins[asso_table] = [@join_count, asso_table, join_cond]
           end
         end
       end
