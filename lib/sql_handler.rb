@@ -18,11 +18,14 @@ module RailsSimpleSearch
 
     def run
       run_criteria
+
+      query = @model_class.joins(@joins_str)
+      if @conditions
+        query = query.where(@conditions)
+      end
+
       if @config[:paginate]
-        @count = @model_class.count({:select => "distinct #{@model_class.table_name}.#{@model_class.primary_key}", 
-                                     :conditions => @conditions,
-                                     :joins => @joins_str }
-                 )
+        @count = query.count
         offset = [((@page || 0) - 1) * @config[:per_page], 0].max
         limit = @config[:per_page]
       else
@@ -30,14 +33,8 @@ module RailsSimpleSearch
         limit = @config[:limit]
       end
 
-      execute_hash = {:select => "distinct #{@model_class.table_name}.*", 
-                      :conditions => @conditions,
-                      :joins => @joins_str, 
-                      :offset => offset,
-                      :limit => limit
-      }
-      execute_hash[:order] = @order if @order
-      @model_class.all(execute_hash)
+      query.order(@order) if @order
+      query.select("distinct #{@model_class.table_name}.*").offset(offset).limit(limit)
     end
 
     private
