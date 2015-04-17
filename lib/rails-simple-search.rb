@@ -8,6 +8,13 @@ module RailsSimpleSearch
                      :limit => 1000, 
                      :per_page => 20
                    }
+
+  module FixModelName
+    def model_name
+      ActiveModel::Name.new(self.class)
+    end
+  end
+
   class Base
     def self.inherited(subclass)
       class << subclass
@@ -16,6 +23,9 @@ module RailsSimpleSearch
            ActiveModel::Name.new(self)
          end
       end
+     
+      # to fix an issues in rails 4.2
+      subclass.send(:include, RailsSimpleSearch::FixModelName)
     end
  
     def initialize(model_class, criteria={}, config={})
