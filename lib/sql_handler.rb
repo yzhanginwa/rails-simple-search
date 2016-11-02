@@ -33,7 +33,7 @@ module RailsSimpleSearch
         limit = @config[:limit]
       end
 
-      query.order(@order) if @order
+      query = query.order(@order) if @order
       query.select("distinct #{@model_class.table_name}.*").offset(offset).limit(limit)
     end
 
