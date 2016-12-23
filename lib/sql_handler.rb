@@ -79,7 +79,13 @@ module RailsSimpleSearch
         if column.respond_to?(:type_cast)
           value = column.type_cast(value)
         elsif column.respond_to?(:cast_type)
-          value = column.cast_type.type_cast(value)
+          if column.cast_type.respond_to?(:type_cast)
+            value = column.cast_type.type_cast(value)
+          elsif column.cast_type.respond_to?(:type_cast_from_user)
+            value = column.cast_type.type_cast_from_user(value)
+          else
+            raise "something wrong!"
+          end
         else
           raise "something wrong!"
         end
