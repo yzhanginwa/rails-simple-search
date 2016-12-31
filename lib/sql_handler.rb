@@ -20,9 +20,7 @@ module RailsSimpleSearch
       run_criteria
 
       query = @model_class.joins(@joins_str)
-      if @conditions
-        query = query.where(@conditions)
-      end
+      query = query.where(@condition_group.to_ar_condition) unless @condition_group.empty?
 
       if @config[:paginate]
         @count = query.count
@@ -52,12 +50,15 @@ module RailsSimpleSearch
   
     def run_criteria
       return unless @conditions.nil? 
+      @condition_group = ConditionGroup.new
+      @condition_group.set_relation(:and)
+
       @criteria.each do |key, value|
         if @config[:page_name].to_s == key.to_s
           @page = value.to_i
           @criteria[key] = @page
         else
-          parse_attribute(key, value)
+          @condition_group.add(parse_attribute(key, value))
         end
       end
 
@@ -103,14 +104,8 @@ module RailsSimpleSearch
         verb = '='
       end
 
-      if @conditions.size < 1
-        @conditions[0] = "#{key} #{verb} ?"
-        @conditions[1] = value
-      else
-        @conditions[0] += " and #{key} #{verb} ?"
-        @conditions << value
-      end
-    end     
+      ConditionGroup.new(ConditionItem.new(key, verb, value))
+    end
   
     def insert_join(base_class, asso_ref)
       base_table = base_class.table_name
@@ -134,8 +129,8 @@ module RailsSimpleSearch
     def parse_attribute(attribute, value)
       unless attribute =~ /\./
         field = attribute
-        insert_condition(@model_class, attribute, field, value)
-        return
+        condition = insert_condition(@model_class, attribute, field, value)
+        return condition
       end 
 
       association_fields = attribute.split(/\./)
@@ -148,8 +143,69 @@ module RailsSimpleSearch
         base_class = association_fields.shift.klass
       end
 
-      insert_condition(base_class, attribute, field, value)
+      condition = insert_condition(base_class, attribute, field, value)
+      return condition
     end
   
+  end
+
+  class ConditionItem
+    attr_reader :field, :verb, :value
+
+    def initialize(field, verb, value)
+      @field = field
+      @verb = verb
+      @value = value
+    end
+  end
+
+  class ConditionGroup
+    def initialize(item=nil)
+      if item
+        @condition_item = item
+      else
+        @children = []
+      end
+    end
+
+    def add(cg)
+      if leaf?
+        raise "It's not allowed to add child into leaf node"
+      end
+      @children << cg
+    end
+
+    def set_relation(and_or)
+      if leaf?
+        raise "It's not needed to set relation for leaf node"
+      end
+      @relation = and_or
+    end
+
+    def leaf?
+      @condition_item ? true : false
+    end
+
+    def empty?
+      (@children && @children.empty?) ? true : false
+    end
+
+    def to_ar_condition
+      condition = []
+      if leaf?
+        i = @condition_item
+        condition << "#{i.field} #{i.verb} ?"
+        condition << i.value
+      else
+        tmp = @children.map(&:to_ar_condition)
+        condition << "(" + tmp.map(&:first).join(" #{@relation} ") + ")"
+        tmp.each do |t|
+          (1..(t.length-1)).each do |index|
+            condition << t[index]
+          end
+        end
+      end
+      condition
+    end
   end
 end
