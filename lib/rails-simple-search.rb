@@ -2,6 +2,7 @@ require_relative 'sql_handler'
 
 module RailsSimpleSearch
   DEFAULT_CONFIG = { :exact_match => [], 
+                     :or_separator => '_or_',
                      :paginate => true, 
                      :page_name => 'page', 
                      :offset => 0,

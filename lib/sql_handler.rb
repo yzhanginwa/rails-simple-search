@@ -127,6 +127,16 @@ module RailsSimpleSearch
     end
   
     def parse_attribute(attribute, value)
+      attributes = attribute.split(@config[:or_separator])
+      if(attributes.size > 1)
+        cg = ConditionGroup.new
+        cg.set_relation(:or)
+        attributes.each do |a|
+          cg.add(parse_attribute(a, value))
+        end
+        return cg
+      end
+
       unless attribute =~ /\./
         field = attribute
         condition = insert_condition(@model_class, attribute, field, value)
