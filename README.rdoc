@@ -47,6 +47,9 @@ The following is how we implement this searching function with rails-simple-sear
       <%=f.label :email %>
       <%=f.text_field :email %>
 
+      <%=f.label "first name or last name" %>
+      <%=f.text_field "first_name_or_last_name" %>
+
       <%=f.label :from_birth_date %>
       <%=f.text_field :birth_date_greater_than_or_equal_to %>
 
@@ -78,6 +81,7 @@ From version 0.9.1 to 0.9.7, Rails 3 is supported.
 From version 0.9.8 on, this gem started to support Rails 4. Version 0.9.8 is tested under Rails 4.1.1, and version 0.9.9 fixed an issue under
 Rails 4.2.
 
+From version 1.1.0 on, we started to support the "or" relation, e.g., we can use field like "first_name_or_last_name".
 
 There is a real demo application which you can download and run immediately: https://github.com/yzhanginwa/demo_app_for_rails_simple_search
 
