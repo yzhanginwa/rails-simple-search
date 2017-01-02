@@ -37,8 +37,7 @@ The following is how we implement this searching function with rails-simple-sear
 3. Code in controller: 
 
     @search = Search.new(User, params[:search])
-    @search.order = 'email'  # optional
-    @users = @search.run
+    @users = @search.run.paginate(page: params[:page], per_page: 20).order('email')
 
 4. Code in views:
 
