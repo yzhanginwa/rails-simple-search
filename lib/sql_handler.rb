@@ -21,18 +21,7 @@ module RailsSimpleSearch
 
       query = @model_class.joins(@joins_str)
       query = query.where(@condition_group.to_ar_condition) unless @condition_group.empty?
-
-      if @config[:paginate]
-        @count = query.count
-        offset = [((@page || 0) - 1) * @config[:per_page], 0].max
-        limit = @config[:per_page]
-      else
-        offset = @config[:offset]
-        limit = @config[:limit]
-      end
-
-      query = query.order(@order) if @order
-      query.select("distinct #{@model_class.table_name}.*").offset(offset).limit(limit)
+      query.select("distinct #{@model_class.table_name}.*")
     end
 
     private
@@ -54,12 +43,7 @@ module RailsSimpleSearch
       @condition_group.set_relation(:and)
 
       @criteria.each do |key, value|
-        if @config[:page_name].to_s == key.to_s
-          @page = value.to_i
-          @criteria[key] = @page
-        else
-          @condition_group.add(parse_attribute(key, value))
-        end
+        @condition_group.add(parse_attribute(key, value))
       end
 
       make_joins
@@ -75,6 +59,7 @@ module RailsSimpleSearch
   
       @conditions ||= []
       column = base_class.columns_hash[field.to_s]
+      return nil unless column
 
       if !column.text? && value.is_a?(String)
         if column.respond_to?(:type_cast)
@@ -182,7 +167,7 @@ module RailsSimpleSearch
       if leaf?
         raise "It's not allowed to add child into leaf node"
       end
-      @children << cg
+      @children << cg if cg
     end
 
     def set_relation(and_or)

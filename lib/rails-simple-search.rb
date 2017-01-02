@@ -2,12 +2,7 @@ require_relative 'sql_handler'
 
 module RailsSimpleSearch
   DEFAULT_CONFIG = { :exact_match => [], 
-                     :or_separator => '_or_',
-                     :paginate => true, 
-                     :page_name => 'page', 
-                     :offset => 0,
-                     :limit => 1000, 
-                     :per_page => 20
+                     :or_separator => '_or_'
                    }
 
   module FixModelName
@@ -32,6 +27,8 @@ module RailsSimpleSearch
     def initialize(model_class, criteria={}, config={})
       @criteria = sanitize_criteria(criteria)
       @config = DEFAULT_CONFIG.merge(config)
+      @config[:exact_match] = [@config[:exact_match]] unless @config[:exact_match].respond_to?(:map!)
+      @config[:exact_match].map!{|em| em.to_s}
 
       @model_class = (model_class.is_a?(Symbol) || model_class.is_a?(String))? model_class.to_s.camelize.constantize : model_class
       load_database_handler(@model_class)
@@ -50,18 +47,6 @@ module RailsSimpleSearch
       @count || 0
     end
 
-    def pages
-      (count == 0)? 0 : (count * 1.0 / @config[:per_page]).ceil 
-    end
-
-    def pages_for_select
-      (1..pages).to_a
-    end
-
-    def order=(str)
-      @order = str
-    end
-  
     def add_conditions(h={})
       @criteria.merge!(h)
     end
