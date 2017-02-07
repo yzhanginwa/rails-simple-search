@@ -61,28 +61,11 @@ module RailsSimpleSearch
       column = base_class.columns_hash[field.to_s]
       return nil unless column
 
-      if !column.text? && value.is_a?(String)
-        if column.respond_to?(:type_cast)
-          value = column.type_cast(value)
-        elsif column.respond_to?(:cast_type)
-          if column.cast_type.respond_to?(:type_cast)
-            value = column.cast_type.type_cast(value)
-          elsif column.cast_type.respond_to?(:type_cast_from_user)
-            value = column.cast_type.type_cast_from_user(value)
-          else
-            raise "something wrong!"
-          end
-        else
-          raise "something wrong!"
-        end
-        @criteria[attribute] = value 
-      end
-
       if value.nil?
         verb = 'is'
       elsif operator
         verb = operator
-      elsif column.text? && ! @config[:exact_match].include?((@table_name == table)? field : key)
+      elsif column.type == :string && ! @config[:exact_match].include?((@table_name == table)? field : key)
         verb = 'like'
         value = "%#{value}%"
       else
