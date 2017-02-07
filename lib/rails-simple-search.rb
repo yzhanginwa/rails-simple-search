@@ -64,7 +64,7 @@ module RailsSimpleSearch
 
     def parse_field_name(name)
       result = {}
-      if name =~ /^(.*)?((_(greater|less)_than)(_or_equal_to)?)$/
+      if name =~ /^(.*)?((_(greater|less)_than)(_equal_to)?)$/
         result[:field_name] = $1
         if $4 == 'greater'
           result[:operator] = ">"
