@@ -25,6 +25,16 @@ module RailsSimpleSearch
     end
 
     private
+
+    def text_column?(column)
+      if column.respond_to?(:text?)
+        column.text?
+      elsif column.respond_to?(:type)
+        column.type == :string
+      else
+        raise "encountered new version of Rails"
+      end
+    end
   
     def make_joins
       @joins_str = ''
@@ -63,9 +73,11 @@ module RailsSimpleSearch
 
       if value.nil?
         verb = 'is'
+      elsif value.is_a?(Array)
+        verb = 'in'
       elsif operator
         verb = operator
-      elsif column.type == :string && ! @config[:exact_match].include?((@table_name == table)? field : key)
+      elsif text_column?(column) && ! @config[:exact_match].include?((@table_name == table)? field : key)
         verb = 'like'
         value = "%#{value}%"
       else
