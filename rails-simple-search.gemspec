@@ -1,5 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'rails-simple-search'
+  s.licenses    = ['MIT']
   s.version     = '1.1.6'
   s.date        = '2017-08-28'
   s.summary     = 'A very simple and light gem to quickly build search/filter function in rails'
