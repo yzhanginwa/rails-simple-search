@@ -184,7 +184,12 @@ module RailsSimpleSearch
       condition = []
       if leaf?
         i = @condition_item
-        condition << "#{i.field} #{i.verb} ?"
+        condition << "#{i.field} #{i.verb}"
+        if i.verb == 'in'
+          condition[0] << " (?)"
+        else
+          condition[0] << " ?"
+        end
         condition << i.value
       else
         tmp = @children.map(&:to_ar_condition)
