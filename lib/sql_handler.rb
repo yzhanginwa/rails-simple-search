@@ -6,16 +6,6 @@ module RailsSimpleSearch
       @joins = {}
     end
 
-    def conditions
-      run_criteria
-      @conditions
-    end
-
-    def joins
-      run_criteria
-      @joins_str
-    end
-
     def run
       run_criteria
 
@@ -48,7 +38,6 @@ module RailsSimpleSearch
     end
   
     def run_criteria
-      return unless @conditions.nil? 
       @condition_group = ConditionGroup.new
       @condition_group.set_relation(:and)
 
@@ -67,7 +56,6 @@ module RailsSimpleSearch
       table = base_class.table_name
       key = "#{table}.#{field}"
   
-      @conditions ||= []
       column = base_class.columns_hash[field.to_s]
       return nil unless column
 
