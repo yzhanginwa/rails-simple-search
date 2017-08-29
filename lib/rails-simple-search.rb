@@ -51,6 +51,16 @@ module RailsSimpleSearch
       @criteria.merge!(h)
     end
   
+    def remove_criteria(key)
+      value = @criteria[key]
+      @criteria.delete(key)
+      value
+    end
+
+    def append_criteria(key, value)
+      @criteria[key] = value
+    end
+
     private 
 
     def method_missing(method, *args)
