@@ -24,6 +24,15 @@ module RailsSimpleSearch
       subclass.send(:include, RailsSimpleSearch::FixModelName)
     end
  
+    def self.pre_process(model_name, &procedure)
+      @pre_processors ||= {}
+      @pre_processors[model_name] = procedure
+    end
+
+    def self.pre_processor(model_name)
+      @pre_processors[model_name]
+    end
+
     def initialize(model_class, criteria={}, config={})
       @criteria = sanitize_criteria(criteria)
       @config = DEFAULT_CONFIG.merge(config)

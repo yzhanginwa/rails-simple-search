@@ -7,6 +7,10 @@ module RailsSimpleSearch
     end
 
     def run
+      if pre_processor = self.class.pre_processor(@model_class.to_s)
+        instance_eval(&pre_processor)
+      end
+
       run_criteria
 
       query = @model_class.joins(@joins_str)
