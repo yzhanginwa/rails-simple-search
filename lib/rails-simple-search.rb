@@ -30,6 +30,7 @@ module RailsSimpleSearch
     end
 
     def self.pre_processor(model_name)
+      @pre_processors ||= {}
       @pre_processors[model_name]
     end
 
