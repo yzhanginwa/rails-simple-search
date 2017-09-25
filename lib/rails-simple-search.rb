@@ -12,6 +12,8 @@ module RailsSimpleSearch
   end
 
   class Base
+    attr_reader :criteria
+
     def self.inherited(subclass)
       class << subclass
          # in rails 3, the call to "form_for" invokes the model_name 
