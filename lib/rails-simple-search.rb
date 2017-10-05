@@ -27,6 +27,7 @@ module RailsSimpleSearch
     end
  
     def self.pre_process(model_name, &procedure)
+      model_name.each { |internal_model_name| pre_process(internal_model_name, &procedure) } if model_name.is_a?(Array)
       @pre_processors ||= {}
       @pre_processors[model_name] = procedure
     end
@@ -64,6 +65,7 @@ module RailsSimpleSearch
     end
   
     def remove_criteria(key)
+      key.each { |internal_key| remove_criteria(internal_key) } if key.is_a?(Array)
       @criteria.delete(key.to_s)
     end
 
