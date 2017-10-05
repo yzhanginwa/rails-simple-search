@@ -58,15 +58,15 @@ module RailsSimpleSearch
     end
 
     def add_conditions(h={})
-      @criteria.merge!(h)
+      @criteria.merge!(h.stringify_keys)
     end
   
     def remove_criteria(key)
-      @criteria.delete(key)
+      @criteria.delete(key.to_s)
     end
 
     def append_criteria(key, value)
-      @criteria[key] = value
+      @criteria[key.to_s] = value
     end
 
     private 
@@ -106,7 +106,7 @@ module RailsSimpleSearch
           c[key] = value
         end
       end
-      c
+      c.stringify_keys
     end
   end
 end
