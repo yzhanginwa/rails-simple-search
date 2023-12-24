@@ -1,25 +1,49 @@
-# rails-simple-search
+## What is rails-simple-search?
+rails-simple-search is a Ruby gem. It can help Ruby on Rails developers **quickly**
+implement searching/filtering function against database. If you're not looking
+for a full-text searching solution, this plugin will most probably **satisfy all**
+your searching requirement.
 
-rails-simple-search is a Ruby gem. It helps you quickly implement searching/filtering function for your web site. This plugin has paginating feature built in. If you're not looking for a full-text searching solution, this plugin will most probably satisfy all your searching requirement.
-
-From time to time, I need to build pages to show a list of narrowed down records from a database table by giving some searching criteria on some columns of the table and/or of some referencing tables. Before I implemented this plugin, I usually do the searching in the following way:
+## Why?
+From time to time, I need to build pages to show a list of narrowed down records
+from a database table by giving some searching criteria on some columns of the
+table and/or of some referencing tables. Before I implemented this plugin, I usually
+do the searching in the following way:
 
 1. Use <%= form_tag %> to build a form in the view
-2. Get the searching criteria from the params hash individually in the controller and put them into instance variable to be used in view
-3. Build the SQL WHERE clause and sometimes the JOIN clause according to the values from the form
-4. Run the find(:all, :conditions => [xxxxxx], :joins => "yyyyyy") with the WHERE and JOIN clauses
+2. Get the searching criteria from the params hash individually in the controller
+   and put them into instance variables to be used in view
+3. Build the SQL WHERE clause and sometimes the JOIN clause according to the
+   values from the form
+4. Run the find(:all, :conditions => [xxxxxxxx], :joins => "xxxxxxxx") with the
+   WHERE and JOIN clauses
 
-After having used this pattern a few times, I realized I could DRY it to make future coding of this kind of searching much simpler. That's where the rails-simple-search plugin comes in. 
+After having used this pattern a few times, I realized I could DRY it to make
+future coding of this kind of searching **much simpler**. That's where the
+rails-simple-search plugin comes in. 
 
-Now implementing the searching/filter page is a lot easier for me. You're see how easy it is by taking a look at the following example. I may give more examples in the future when I have some spare time. 
+## Installation
+1. Put the following line into the Gemfile of your project
+```
+   gem 'rails-simple-search'
+```
 
+2. Install the gems in Gemfile
+```
+   $ bundle install
+```
 
-## Example
+## Usage 
 
-Let's suppose we have models of User, Address, Post and Comment. User model has_one address and has_many posts; Post model has_many comments. We'd like to search for users according to any combination of the following criteria:
+Let's suppose we have models of User, Address, Post and Comment. User model has_one
+address, has_many posts, and has_many comments; Post model has_many comments; Comment
+model belongs_to an author(of model User). We'd like to search for users according
+to any combination of the following criteria:
 
 * part of the user's email addrsss
+* part of the first name or last name
 * range of the user's birth date
+* part of the city name of the user's address
 * state of the user's address
 * part of the name of any authors who commented the user's any posts
 
@@ -55,14 +79,18 @@ The following is how we implement this searching function with rails-simple-sear
       <%=f.label :from_birth_date %>
       <%=f.text_field :birth_date_greater_than_equal_to %>
 
-      <%=f.label :to_age %>
+      <%=f.label :to_birth_date %>
       <%=f.text_field :birth_date_less_than_equal_to %>
 
       <%=f.label :state%>
       <%=f.select "address.state_id", [['AL', 1], ...] %>  <!-- address is an association of model User -->
 
-      <%=f.label :post%>
-      <%=f.text_field "posts.comments.author" %>           <!-- the associations could go even deeper, isn't it POWERFUL? -->
+      <%=f.label :city %>
+      <%=f.text_field "address.city" %>                    <!-- address is an association of model User -->
+
+      <%=f.label "name of any one who commented to my posts" %>
+      <%=f.text_field "posts.comments.author.first_name_or_posts.comments.author.last_name" %> 
+                                                           <!-- the associations could go even deeper, isn't it POWERFUL? -->
 
       <%=f.submit %>
     <% end %>
@@ -77,8 +105,12 @@ The following is how we implement this searching function with rails-simple-sear
     post "/xxxxxx" => "yyyyyyy#zzzzzz"
 ```
 
-## Note
+## Demo projects
+There are 2 demo projects for this gem, one for [Rails 5](https://github.com/yzhanginwa/demo_app_for_rails_simple_search)
+and one for [Rails 7](https://github.com/yzhanginwa/rails_simple_search_demo). You are encouraged to clone them to your local and
+get a feel of the power of rails-simple-search.
 
+## Version history 
 For rails 2.x.x applications, you might want to use the version 0.9.0. 
 
 From version 0.9.1 to 0.9.7, Rails 3 is supported.
@@ -92,9 +124,6 @@ From version 1.1.3 on, we started to support Rails 5.
 
 For Rails 7, please use version 1.1.9.
 
-There are 2 demo projects for this gem, one for [Rails 5](https://github.com/yzhanginwa/demo_app_for_rails_simple_search)
-and one for [Rails 7](https://github.com/yzhanginwa/rails_simple_search_demo)
-
 ## License
 
-Copyright &copy; 2012 [Yi Zhang], released under the MIT license
+Copyright &copy; 2012 [Ethan Zhang], released under the MIT license
