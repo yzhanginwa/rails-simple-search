@@ -24,7 +24,7 @@ module RailsSimpleSearch
       if column.respond_to?(:text?)
         column.text?
       elsif column.respond_to?(:type)
-        column.type == :string
+        column.type == :string || column.type == :text
       else
         raise "encountered new version of Rails"
       end
