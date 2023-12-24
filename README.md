@@ -1,4 +1,4 @@
-=rails-simple-search
+# rails-simple-search
 
 rails-simple-search is a Ruby gem. It helps you quickly implement searching/filtering function for your web site. This plugin has paginating feature built in. If you're not looking for a full-text searching solution, this plugin will most probably satisfy all your searching requirement.
 
@@ -14,7 +14,7 @@ After having used this pattern a few times, I realized I could DRY it to make fu
 Now implementing the searching/filter page is a lot easier for me. You're see how easy it is by taking a look at the following example. I may give more examples in the future when I have some spare time. 
 
 
-== Example
+## Example
 
 Let's suppose we have models of User, Address, Post and Comment. User model has_one address and has_many posts; Post model has_many comments. We'd like to search for users according to any combination of the following criteria:
 
@@ -26,21 +26,24 @@ Let's suppose we have models of User, Address, Post and Comment. User model has_
 The following is how we implement this searching function with rails-simple-search:
 
 1. Include gem into Gemfile
-  
+```  
     gem 'rails-simple-search'
+```
 
 2. Code in model (app/model/search.rb):
-
+```
     class Search < RailsSimpleSearch::Base
     end
+```
 
 3. Code in controller: 
-
+```
     @search = Search.new(User, params[:search])
     @users = @search.run.order('email')
+```
 
 4. Code in views:
-
+```
     <% form_for @search, url => "/xxxxxx", data: {turbo: false} do |f| %>
 
       <%=f.label :email %>
@@ -67,11 +70,14 @@ The following is how we implement this searching function with rails-simple-sear
     <% @users.each do |user| %>
      <%= # show the attributes of user %>
     <% end %>
+```
 
 5. Add route for the post to url "/xxxxxx" (config/route.rb)
+```
     post "/xxxxxx" => "yyyyyyy#zzzzzz"
+```
 
-== Note
+## Note
 
 For rails 2.x.x applications, you might want to use the version 0.9.0. 
 
@@ -84,12 +90,11 @@ From version 1.1.0 on, we started to support the "or" relation, e.g., we can use
 
 From version 1.1.3 on, we started to support Rails 5.
 
-For Rails 7, please use version 1.1.7.
+For Rails 7, please use version 1.1.9.
 
-There is a real demo application which you can download and run immediately: https://github.com/yzhanginwa/demo_app_for_rails_simple_search
+There are 2 demo projects for this gem, one for [Rails 5](https://github.com/yzhanginwa/demo_app_for_rails_simple_search)
+and one for [Rails 7](https://github.com/yzhanginwa/rails_simple_search_demo)
 
-For Rails 7 demo, please see here: https://github.com/yzhanginwa/rails_simple_search_demo
+## License
 
-== License
-
-Copyright (c) 2012 [Yi Zhang], released under the MIT license
+Copyright &copy; 2012 [Yi Zhang], released under the MIT license
