@@ -36,7 +36,7 @@ module RailsSimpleSearch
       joins.each do |j|
         table = j[1]
         constrain = j[2]
-        @joins_str << " inner join #{table} on #{constrain}"
+        @joins_str << format(" inner join #{table} AS A%02d on #{constrain}", j[0])
       end
     end
 
@@ -51,10 +51,11 @@ module RailsSimpleSearch
       make_joins
     end
 
-    def build_single_condition(base_class, field, value)
+    def build_single_condition(base_class, association_alias, field, value)
       field, operator = parse_field_name(field)
       table = base_class.table_name
       key = "#{table}.#{field}"
+      final_key = "#{association_alias}.#{field}"
 
       column = base_class.columns_hash[field.to_s]
       return nil unless column
@@ -72,7 +73,11 @@ module RailsSimpleSearch
         verb = '='
       end
 
-      ConditionGroup.new(ConditionItem.new(key, verb, value))
+      ConditionGroup.new(ConditionItem.new(final_key, verb, value))
+    end
+
+    def table_name_to_alias(table_name)
+      format('A%02d', @joins[table_name][0])
     end
 
     def insert_join(base_class, asso_ref)
@@ -84,11 +89,14 @@ module RailsSimpleSearch
       return unless @joins[asso_table].nil?
 
       @join_count += 1
+      base_table_alias = @join_count < 2 ? base_table : table_name_to_alias(base_table)
+      asso_table_alias = format('A%02d', @join_count)
+
       if asso_ref.belongs_to?
-        @joins[asso_table] =[@join_count, asso_table, "#{base_table}.#{asso_ref.foreign_key} = #{asso_table}.#{asso_ref.klass.primary_key}"]
+        @joins[asso_table] =[@join_count, asso_table, "#{base_table_alias}.#{asso_ref.foreign_key} = #{asso_table_alias}.#{asso_ref.klass.primary_key}"]
       else
-        join_cond = "#{base_table}.#{base_class.primary_key} = #{asso_table}.#{asso_ref.foreign_key}"
-        join_cond = "#{asso_table}.#{asso_ref.type} = '#{base_class.name}' and #{join_cond}" if asso_ref.type
+        join_cond = "#{base_table_alias}.#{base_class.primary_key} = #{asso_table_alias}.#{asso_ref.foreign_key}"
+        join_cond = "#{asso_table_alias}.#{asso_ref.type} = '#{base_class.name}' and #{join_cond}" if asso_ref.type
         @joins[asso_table] = [@join_count, asso_table, join_cond]
       end
     end
@@ -96,6 +104,7 @@ module RailsSimpleSearch
     # This method parse a search parameter and its value
     # then produce a ConditionGroup
     def parse_search_parameters(attribute, value)
+      # handle _or_ parameters
       attributes = attribute.split(@config[:or_separator])
       if attributes.size > 1
         cg = ConditionGroup.new
@@ -106,11 +115,13 @@ module RailsSimpleSearch
         return cg
       end
 
+      # handle direct fields
       unless attribute =~ /\./
-        condition = build_single_condition(@model_class, attribute, value)
+        condition = build_single_condition(@model_class, @model_class.table_name, attribute, value)
         return condition
       end
 
+      # handle association fields
       association_fields = attribute.split(/\./)
       field = association_fields.pop
 
@@ -121,7 +132,8 @@ module RailsSimpleSearch
         base_class = association_fields.shift.klass
       end
 
-      build_single_condition(base_class, field, value)
+      association_alias = table_name_to_alias(base_class.table_name)
+      build_single_condition(base_class, association_alias, field, value)
     end
   end
 
