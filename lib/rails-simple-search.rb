@@ -84,15 +84,15 @@ module RailsSimpleSearch
     end
 
     def parse_field_name(name)
-      result = {}
       if name =~ /^(.*)?((_(greater|less)_than)(_equal_to)?)$/
-        result[:field_name] = ::Regexp.last_match(1)
-        rresult[:operator] = (::Regexp.last_match(4) == 'greater' ? '>' : '<')
-        result[:operator] << '=' if ::Regexp.last_match(5)
+        field_name = ::Regexp.last_match(1)
+        operator = (::Regexp.last_match(4) == 'greater' ? '>' : '<')
+        operator << '=' if ::Regexp.last_match(5)
       else
-        result[:field_name] = name
+        field_name = name
       end
-      result
+
+      [field_name, operator]
     end
 
     def sanitize_criteria(criteria)
