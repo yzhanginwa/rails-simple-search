@@ -1,9 +1,27 @@
 require 'minitest/autorun'
 require 'rails-simple-search'
+require_relative 'support'
 
 class RailsSimpleSearchTest < Minitest::Test
-  def test_one
-    assert_equal "hello world", "hello world"
+  def test_direct_attributes
+    search = Search.new(:user, { 'first_name': 'Mike' }, exact_match: [:first_name])
+    users = search.run
+    assert_equal users.joins, ''
+    assert_equal users.conditions, ['(users.first_name = ?)', 'Mike']
+    assert_equal users.selects, 'distinct users.*'
   end
-end
 
+  def test_association_attributes
+    search = Search.new(:user, { 'posts.title': 'my first post' }, exact_match: [:first_name])
+    users = search.run
+    assert_equal users.joins, ' inner join posts on users.id = posts.user_id'
+    assert_equal users.conditions, ['(posts.title like ?)', '%my first post%']
+  end
+
+  # def test_association_loop_attributes
+  #   search = Search.new(:user, {'posts.comments.user.first_name': 'Nancy'}, exact_match: [:first_name])
+  #   users = search.run
+  #   assert_equal users.joins, ' inner join posts on users.id = posts.user_id'
+  #   # assert_equal users.conditions, []
+  # end
+end
