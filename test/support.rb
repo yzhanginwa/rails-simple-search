@@ -49,18 +49,26 @@ module ActiveRecord
       @association_symbol = association_symbol
     end
 
+    def check_association(base, association)
+      @base_model == base && @association_symbol == association ? true : false
+    end
+
     def foreign_key
+      return 'addressable_id' if check_association(:user, :address)
+
       belongs_to? ? "#{@association_symbol}_id" : "#{@base_model}_id"
     end
 
     def klass
       case @association_symbol
+      when :user
+        User
       when :posts
         Post
       when :comments
         Comment
-      when :user
-        User
+      when :address
+        Address
       else
         raise 'Unknown class'
       end
@@ -68,7 +76,7 @@ module ActiveRecord
 
     def type
       case [@base_model, @association_symbol]
-      when %i[user addressable]
+      when %i[user address]
         'addressable_type'
       end
     end
@@ -81,6 +89,8 @@ module ActiveRecord
         false
       when %i[comment user]
         true
+      when %i[user address]
+        false
       else
         raise 'Unknown association pair'
       end
@@ -136,5 +146,23 @@ class Comment < ActiveRecord::Base
     { 'body' => ActiveRecord::Column.new(:string) }
   end
 end
+
+class Address < ActiveRecord::Base
+  def self.symbol_name
+    :address
+  end
+
+  def self.table_name
+    'addresses'
+  end
+
+  def self.columns_hash
+    {
+      'state' => ActiveRecord::Column.new(:string),
+      'city' => ActiveRecord::Column.new(:string)
+    }
+  end
+end
+
 class Search < RailsSimpleSearch::Base
 end

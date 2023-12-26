@@ -18,6 +18,12 @@ class RailsSimpleSearchTest < Minitest::Test
     assert_equal users.conditions, ['(posts.title like ?)', '%my first post%']
   end
 
+  def test_polymorphic_association_attributes
+    search = Search.new(:user, { 'address.city': 'seattle' }, exact_match: [:first_name])
+    users = search.run
+    assert_equal users.joins, " inner join addresses on addresses.addressable_type = 'User' and users.id = addresses.addressable_id"
+    assert_equal users.conditions, ['(addresses.city like ?)', '%seattle%']
+  end
   # def test_association_loop_attributes
   #   search = Search.new(:user, {'posts.comments.user.first_name': 'Nancy'}, exact_match: [:first_name])
   #   users = search.run
