@@ -45,7 +45,7 @@ module RailsSimpleSearch
       @condition_group.set_relation(:and)
 
       @criteria.each do |key, value|
-        @condition_group.add(parse_attribute(key, value))
+        @condition_group.add(parse_search_parameters(key, value))
       end
 
       make_joins
@@ -93,13 +93,13 @@ module RailsSimpleSearch
       end
     end
 
-    def parse_attribute(attribute, value)
+    def parse_search_parameters(attribute, value)
       attributes = attribute.split(@config[:or_separator])
       if attributes.size > 1
         cg = ConditionGroup.new
         cg.set_relation(:or)
         attributes.each do |a|
-          cg.add(parse_attribute(a, value))
+          cg.add(parse_search_parameters(a, value))
         end
         return cg
       end
