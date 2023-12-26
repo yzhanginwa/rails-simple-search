@@ -1,7 +1,7 @@
 module RailsSimpleSearch
   module SqlHandler
     def init
-      @table_name = @model_class.table_name
+      @model_table_name = @model_class.table_name
       @joins = {}
     end
 
@@ -65,7 +65,7 @@ module RailsSimpleSearch
         verb = 'in'
       elsif operator
         verb = operator
-      elsif text_column?(column) && ! @config[:exact_match].include?((@table_name == table) ? field : key)
+      elsif text_column?(column) && ! @config[:exact_match].include?((@model_table_name == table) ? field : key)
         verb = 'like'
         value = "%#{value}%"
       else
@@ -93,6 +93,8 @@ module RailsSimpleSearch
       end
     end
 
+    # This method parse a search parameter and its value
+    # then produce a ConditionGroup
     def parse_search_parameters(attribute, value)
       attributes = attribute.split(@config[:or_separator])
       if attributes.size > 1
@@ -123,6 +125,7 @@ module RailsSimpleSearch
     end
   end
 
+  # This class holds a single condition
   class ConditionItem
     attr_reader :field, :verb, :value
 
@@ -133,6 +136,9 @@ module RailsSimpleSearch
     end
   end
 
+  # This class holds a ConditionGroup
+  # One ConditionGroup can hold one or more
+  # conditions
   class ConditionGroup
     def initialize(item = nil)
       if item
