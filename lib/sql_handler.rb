@@ -51,7 +51,7 @@ module RailsSimpleSearch
       make_joins
     end
 
-    def insert_condition(base_class, field, value)
+    def build_single_condition(base_class, field, value)
       field, operator = parse_field_name(field)
       table = base_class.table_name
       key = "#{table}.#{field}"
@@ -105,7 +105,7 @@ module RailsSimpleSearch
       end
 
       unless attribute =~ /\./
-        condition = insert_condition(@model_class, attribute, value)
+        condition = build_single_condition(@model_class, attribute, value)
         return condition
       end
 
@@ -119,7 +119,7 @@ module RailsSimpleSearch
         base_class = association_fields.shift.klass
       end
 
-      insert_condition(base_class, field, value)
+      build_single_condition(base_class, field, value)
     end
   end
 
