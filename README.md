@@ -1,4 +1,23 @@
 [![Gem Version](https://badge.fury.io/rb/rails-simple-search.svg)](https://badge.fury.io/rb/rails-simple-search)
+
+### Table of Contents
+
+* [What is rails-simple-search?](#what-is-rails-simple-search)
+
+* [Why?](#why)
+
+* [Installation](#installation)
+
+* [Usage](#usage)
+
+* [How to construct field names](#how-to-construct-field-names)
+
+* [Demo projects](#demo-projects)
+
+* [Version history](#version-history)
+
+* [License](#license)
+
 ## What is rails-simple-search?
 rails-simple-search is a Ruby gem. It can help Ruby on Rails developers **quickly**
 implement searching/filtering function against database. If you're not looking
