@@ -108,7 +108,10 @@ class User < ActiveRecord::Base
   end
 
   def self.columns_hash
-    { 'first_name' => ActiveRecord::Column.new(:string) }
+    {
+      'first_name' => ActiveRecord::Column.new(:string),
+      'last_name' => ActiveRecord::Column.new(:string)
+    }
   end
 
   def self.joins(joins)
