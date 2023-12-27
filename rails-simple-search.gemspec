@@ -9,4 +9,5 @@ Gem::Specification.new do |s|
   s.email       = 'yzhang.wa@gmail.com'
   s.files       = ['README.md', 'lib/rails-simple-search.rb', 'lib/sql_handler.rb']
   s.homepage    = 'http://github.com/yzhanginwa/rails-simple-search'
+  s.required_ruby_version = '>=2.7.0'
 end
