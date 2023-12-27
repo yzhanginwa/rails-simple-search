@@ -1,3 +1,4 @@
+[![Gem Version](https://badge.fury.io/rb/rails-simple-search.svg)](https://badge.fury.io/rb/rails-simple-search)
 ## What is rails-simple-search?
 rails-simple-search is a Ruby gem. It can help Ruby on Rails developers **quickly**
 implement searching/filtering function against database. If you're not looking
