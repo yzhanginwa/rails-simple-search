@@ -67,6 +67,8 @@ The following is how we implement this searching function with rails-simple-sear
 ```
 
 4. Code in views:
+   **Pay attention to the name of the form fields**.
+
 ```
     <% form_for @search, url => "/xxxxxx", data: {turbo: false} do |f| %>
 
@@ -104,6 +106,50 @@ The following is how we implement this searching function with rails-simple-sear
 ```
     post "/xxxxxx" => "yyyyyyy#zzzzzz"
 ```
+
+## How to construct field names
+1. Let's call the model we're search for is the base model. If you just want to search
+against any direct fields of the base model, we just use the table field name as the html
+input field name. For example
+```
+   "email"
+```
+
+2. If you need to search against fields of the base model's association, you can just
+use the association name and the table field name with a dot "." connecting them. Like this
+```
+   "address.city"
+```
+
+3. You can chain the associations more than 2 layers. For example, we're going to
+find out the users whose posts have been commented by someone whose first name we happen to know.
+```
+   "posts.comments.user.first_name"
+```
+
+4. Sometimes we need to find out something according to a range of time, or a range of numbers,
+we can attach "_greater_than", "_greater_than_equal_to", "_less_than", or "_less_than_equal_to".
+For example, we need to find out the users who birth date is between a range, the field names
+can be like this
+```
+   birth_date_greater_than
+```
+and
+```
+   birth_date_greater_than
+```
+
+5. Sometimes we need to express the idea of "or", for example, I know roughly a user's name, but
+not sure if it's her first name or last name, we can do it like this
+```
+   first_name_or_last_name
+```
+
+6. We can even use the "or" relation with association fields. For example
+```
+   posts.comments.user.first_name_or_posts.comments.user.last_name
+```
+
 
 ## Demo projects
 There are 2 demo projects for this gem, one for [Rails 5](https://github.com/yzhanginwa/demo_app_for_rails_simple_search)
