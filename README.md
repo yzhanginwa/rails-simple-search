@@ -89,7 +89,7 @@ The following is how we implement this searching function with rails-simple-sear
       <%=f.text_field "address.city" %>                    <!-- address is an association of model User -->
 
       <%=f.label "name of any one who commented to my posts" %>
-      <%=f.text_field "posts.comments.author.first_name_or_posts.comments.author.last_name" %> 
+      <%=f.text_field "posts.comments.user.first_name_or_posts.comments.user.last_name" %>
                                                            <!-- the associations could go even deeper, isn't it POWERFUL? -->
 
       <%=f.submit %>
@@ -122,7 +122,7 @@ From version 1.1.0 on, we started to support the "or" relation, e.g., we can use
 
 From version 1.1.3 on, we started to support Rails 5.
 
-For Rails 7, please use version 1.1.9.
+For Rails 7, please use version 1.2.0.
 
 ## License
 
