@@ -4,7 +4,7 @@
 
 * [What is rails-simple-search?](#what-is-rails-simple-search)
 
-* [Why?](#why)
+* [Why rails-simple-search?](#why-rails-simple-search)
 
 * [Installation](#installation)
 
@@ -24,7 +24,7 @@ implement searching/filtering function against database. If you're not looking
 for a full-text searching solution, this plugin will most probably **satisfy all**
 your searching requirement.
 
-## Why?
+## Why rails-simple-search?
 From time to time, I need to build pages to show a list of narrowed down records
 from a database table by giving some searching criteria on some columns of the
 table and/or of some referencing tables. Before I implemented this plugin, I usually
