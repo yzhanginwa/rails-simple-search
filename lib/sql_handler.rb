@@ -81,7 +81,6 @@ module RailsSimpleSearch
     end
 
     def insert_join(base_class, asso_ref, new_asso_chain)
-      debugger
       base_table = base_class.table_name
       asso_table = asso_ref.klass.table_name
 

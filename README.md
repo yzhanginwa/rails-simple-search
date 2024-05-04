@@ -188,7 +188,7 @@ From version 1.1.0 on, we started to support the "or" relation, e.g., we can use
 
 From version 1.1.3 on, we started to support Rails 5.
 
-For Rails 7, please use version 1.2.0.
+For Rails 7, please use version 1.2.2.
 
 ## License
 
