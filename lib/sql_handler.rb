@@ -80,7 +80,8 @@ module RailsSimpleSearch
       format('A%02d', @joins[table_name][0])
     end
 
-    def insert_join(base_class, asso_ref)
+    def insert_join(base_class, asso_ref, new_asso_chain)
+      debugger
       base_table = base_class.table_name
       asso_table = asso_ref.klass.table_name
 
@@ -89,7 +90,7 @@ module RailsSimpleSearch
       return unless @joins[asso_table].nil?
 
       @join_count += 1
-      base_table_alias = @join_count < 2 ? base_table : table_name_to_alias(base_table)
+      base_table_alias = new_asso_chain ? base_table : table_name_to_alias(base_table)
       asso_table_alias = format('A%02d', @join_count)
 
       if asso_ref.belongs_to?
@@ -126,9 +127,11 @@ module RailsSimpleSearch
       field = association_fields.pop
 
       base_class = @model_class
+      new_asso_chain = true
       until association_fields.empty?
         association_fields[0] = base_class.reflect_on_association(association_fields[0].to_sym)
-        insert_join(base_class, association_fields[0])
+        insert_join(base_class, association_fields[0], new_asso_chain)
+        new_asso_chain = false
         base_class = association_fields.shift.klass
       end
 
