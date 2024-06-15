@@ -80,9 +80,10 @@ module RailsSimpleSearch
       format('A%02d', @joins[table_name][0])
     end
 
-    def insert_join(base_class, asso_ref, new_asso_chain)
+    def insert_join(base_class, asso_ref, new_asso_chain, poly_asso_type_class=nil)
+      return if asso_ref.polymorphic? && poly_asso_type_class.blank?
       base_table = base_class.table_name
-      asso_table = asso_ref.klass.table_name
+      asso_table = poly_asso_type_class&.table_name || asso_ref.klass.table_name
 
       @join_count ||= 0
       return if base_table == asso_table
@@ -93,12 +94,17 @@ module RailsSimpleSearch
       asso_table_alias = format('A%02d', @join_count)
 
       if asso_ref.belongs_to?
-        @joins[asso_table] =[@join_count, asso_table, "#{base_table_alias}.#{asso_ref.foreign_key} = #{asso_table_alias}.#{asso_ref.klass.primary_key}"]
+        if asso_ref.polymorphic?
+          join_cond = "#{base_table_alias}.#{asso_ref.foreign_key} = #{asso_table_alias}.#{poly_asso_type_class.primary_key}"
+          join_cond = "#{base_table_alias}.#{asso_ref.foreign_type} = '#{poly_asso_type_class.name}' and #{join_cond}"
+        else
+          join_cond = "#{base_table_alias}.#{asso_ref.foreign_key} = #{asso_table_alias}.#{asso_ref.klass.primary_key}"
+        end
       else
         join_cond = "#{base_table_alias}.#{base_class.primary_key} = #{asso_table_alias}.#{asso_ref.foreign_key}"
         join_cond = "#{asso_table_alias}.#{asso_ref.type} = '#{base_class.name}' and #{join_cond}" if asso_ref.type
-        @joins[asso_table] = [@join_count, asso_table, join_cond]
       end
+      @joins[asso_table] = [@join_count, asso_table, join_cond]
     end
 
     # This method parse a search parameter and its value
@@ -127,11 +133,22 @@ module RailsSimpleSearch
 
       base_class = @model_class
       new_asso_chain = true
-      until association_fields.empty?
-        association_fields[0] = base_class.reflect_on_association(association_fields[0].to_sym)
-        insert_join(base_class, association_fields[0], new_asso_chain)
+      while (current_association_string = association_fields.shift)
+        # polymorphic association with solid target table_name
+        # such as 'commentable:post'
+        if current_association_string.include?(':')
+          poly_asso_name, poly_asso_type = current_association_string.split(':')
+          current_association = base_class.reflect_on_association(poly_asso_name.to_sym)
+          poly_asso_type_class = poly_asso_type.downcase.camelize.constantize
+          insert_join(base_class, current_association, new_asso_chain, poly_asso_type_class)
+          base_class = poly_asso_type_class
+        else
+          current_association = base_class.reflect_on_association(current_association_string.to_sym)
+          insert_join(base_class, current_association, new_asso_chain)
+          base_class = current_association.klass
+        end
+
         new_asso_chain = false
-        base_class = association_fields.shift.klass
       end
 
       association_alias = table_name_to_alias(base_class.table_name)
