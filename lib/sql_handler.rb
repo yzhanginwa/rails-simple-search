@@ -1,3 +1,35 @@
+# This gem returns some rows of a certain table (model), according to the search parameters.
+# Each search parameter can ba a direct field (like first_name, last_name), indirect
+# field (like address.city, posts.comments.author.first_nane), or composite field
+# (like, address.city_or_posts.comments.author.city).
+#
+# For example, if we have 3 search parameters, {"serach":{"aaa":"aaa"}, {"bbb.ccc":"ccc"}, {"ddd.eee_or_ggg.hhh":"hhh"}}
+# The psudo result sql statement would look like:
+#
+#   select * from base_model
+#     where aaa = 'aaa'
+#
+#   intersect
+#
+#   select * from base_model
+#     join xxxxxx
+#     where ccc = 'ccc'
+#
+#   intersect
+#
+#   select * from
+#   (
+#     select * from base_model
+#       join xxxxxx
+#       where eee = 'ccc'
+#
+#     union
+#
+#     select * from base_model
+#       join xxxxxx
+#       where hhh= 'ccc'
+#   ) as union_result_1
+#
 module RailsSimpleSearch
   module SqlHandler
     def init
