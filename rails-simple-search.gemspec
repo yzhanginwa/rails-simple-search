@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = 'rails-simple-search is a light and easy to use gem. It could help developers quickly build a search page.'
   s.authors     = ['Yi Zhang']
   s.email       = 'yzhang.wa@gmail.com'
-  s.files       = ['README.md', 'lib/rails-simple-search.rb', 'lib/sql_handler.rb']
+  s.files       = ['README.md', 'lib/rails-simple-search.rb', 'lib/sql_handler.rb', 'lib/selection_group.rb', 'lib/selection_item.rb']
   s.homepage    = 'http://github.com/yzhanginwa/rails-simple-search'
   s.required_ruby_version = '>=2.7.0'
 end
